@@ -2,6 +2,25 @@
 
 Service de notifications par email pour l'écosystème Imagink avec **intégration webhooks Clerk** et notifications automatiques.
 
+## 🌐 **Déploiement en Production**
+
+✅ **Service déployé et opérationnel sur Render**
+
+- **URL de production** : https://notifications-service-j6kz.onrender.com
+- **Service ID** : `srv-d2j3bi8dl3ps738miaqg`
+- **Status** : Live et opérationnel
+- **Branch** : `main` (déploiement automatique)
+
+### 🔗 **Endpoints de production**
+
+```
+Base URL: https://notifications-service-j6kz.onrender.com
+
+Webhooks Clerk: https://notifications-service-j6kz.onrender.com/api/webhooks/clerk
+Notifications: https://notifications-service-j6kz.onrender.com/api/notify
+Health Check: https://notifications-service-j6kz.onrender.com/api/notify/health
+```
+
 ## 🎯 Fonctionnalités
 
 ### ✅ Notifications automatiques (Webhooks Clerk)
@@ -10,6 +29,7 @@ Service de notifications par email pour l'écosystème Imagink avec **intégrati
    - Déclenché automatiquement lors de l'inscription via Clerk
    - Email personnalisé avec le nom de l'utilisateur
    - Intégration complète avec le système d'authentification
+   - **✅ Testé et fonctionnel en production**
 
 ### ✅ Notifications manuelles
 
@@ -47,6 +67,8 @@ src/
 
 ## 🚀 Installation
 
+### 🏠 **Développement local**
+
 ```bash
 # Installer les dépendances
 npm install
@@ -56,7 +78,17 @@ cp env.example .env
 # Puis configurer vos credentials
 ```
 
+### ☁️ **Production (Render)**
+
+Le service est déjà déployé et configuré sur Render avec :
+- Déploiement automatique depuis le repository Git
+- Variables d'environnement sécurisées
+- Monitoring et logs en temps réel
+- Scaling automatique
+
 ## ⚙️ Configuration
+
+### 🔧 **Développement local**
 
 Créez un fichier `.env` avec :
 
@@ -79,6 +111,13 @@ NODE_ENV=development
 CLERK_WEBHOOK_SECRET=whsec_votre_secret_ici
 ```
 
+### 🌐 **Production (Render)**
+
+Les variables d'environnement sont configurées dans le dashboard Render :
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`
+- `CLERK_WEBHOOK_SECRET`
+- `NODE_ENV=production`
+
 ### 🔐 Configuration Gmail
 
 1. Activez l'authentification à 2 facteurs
@@ -89,11 +128,13 @@ CLERK_WEBHOOK_SECRET=whsec_votre_secret_ici
 
 1. **Dashboard Clerk** : [https://dashboard.clerk.com](https://dashboard.clerk.com)
 2. **Webhooks** → **Add Endpoint**
-3. **URL** : `https://votre-domaine.com/api/webhooks/clerk`
+3. **URL** : `https://notifications-service-j6kz.onrender.com/api/webhooks/clerk`
 4. **Événements** : `user.created`, `user.updated`, `user.deleted`
 5. **Signing Secret** : Copiez dans `CLERK_WEBHOOK_SECRET`
 
 ## 🏃‍♂️ Démarrage
+
+### 🏠 **Développement local**
 
 ```bash
 # Mode développement
@@ -105,21 +146,30 @@ npm start
 
 Le service démarre sur `http://localhost:9003`
 
+### ☁️ **Production**
+
+Le service est automatiquement démarré sur Render et accessible via :
+`https://notifications-service-j6kz.onrender.com`
+
 ## 📡 API Endpoints
 
-### 🔗 Webhooks Clerk (Automatiques)
+### 🔗 **Webhooks Clerk (Automatiques)**
 
 #### Endpoint principal
 ```
 POST /api/webhooks/clerk
 ```
 
+**URLs disponibles :**
+- **Production** : `https://notifications-service-j6kz.onrender.com/api/webhooks/clerk`
+- **Local** : `http://localhost:9003/api/webhooks/clerk`
+
 #### Test de l'endpoint
 ```
 GET /api/webhooks/clerk/test
 ```
 
-### 📧 Notifications manuelles
+### 📧 **Notifications manuelles**
 
 #### Health Check
 ```
@@ -182,6 +232,8 @@ POST /api/notify/product-created
 7. Réponse 200 OK à Clerk
 ```
 
+**✅ Ce flux est testé et fonctionnel en production**
+
 ### Notification manuelle
 ```
 1. Autre service appelle → POST /api/notify/[type]
@@ -210,6 +262,8 @@ POST /api/notify/product-created
 
 ## 🧪 Tests
 
+### 🏠 **Tests locaux**
+
 ```bash
 # Test complet du service
 npm test
@@ -226,12 +280,24 @@ curl -X POST http://localhost:9003/api/notify/welcome \
 curl http://localhost:9003/api/webhooks/clerk/test
 ```
 
+### 🌐 **Tests en production**
+
+```bash
+# Test de santé
+curl https://notifications-service-j6kz.onrender.com/api/notify/health
+
+# Test d'email de bienvenue
+curl -X POST https://notifications-service-j6kz.onrender.com/api/notify/welcome \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@example.com", "userName": "Test User"}'
+```
+
 ## 🔗 Intégration avec les autres services
 
 ### Service IA (Génération d'images)
 ```javascript
 // Après génération réussie d'une image
-await axios.post('http://localhost:9003/api/notify/image-generated', {
+await axios.post('https://notifications-service-j6kz.onrender.com/api/notify/image-generated', {
   email: user.email,
   userName: user.name,
   imageUrl: generatedImage.url,
@@ -242,7 +308,7 @@ await axios.post('http://localhost:9003/api/notify/image-generated', {
 ### Service de paiement
 ```javascript
 // Après achat de crédits
-await axios.post('http://localhost:9003/api/notify/credit-purchase', {
+await axios.post('https://notifications-service-j6kz.onrender.com/api/notify/credit-purchase', {
   email: user.email,
   userName: user.name,
   credits: purchasedCredits,
@@ -254,7 +320,7 @@ await axios.post('http://localhost:9003/api/notify/credit-purchase', {
 ### Service Printify
 ```javascript
 // Après création d'un produit
-await axios.post('http://localhost:9003/api/notify/product-created', {
+await axios.post('https://notifications-service-j6kz.onrender.com/api/notify/product-created', {
   email: user.email,
   userName: user.name,
   productName: product.title,
@@ -264,7 +330,14 @@ await axios.post('http://localhost:9003/api/notify/product-created', {
 
 ## 📊 Monitoring et Logs
 
-### Logs disponibles
+### 📈 **Production (Render)**
+
+- **Logs en temps réel** : Accessibles via le dashboard Render
+- **Monitoring** : Uptime et performance automatiques
+- **Scaling** : Gestion automatique de la charge
+
+### 📝 **Logs disponibles**
+
 ```
 📨 Webhook Clerk reçu: user.created
 👤 Nouvel utilisateur créé: user_xxx
@@ -273,9 +346,10 @@ await axios.post('http://localhost:9003/api/notify/product-created', {
 ❌ Erreur webhook Clerk: [détails]
 ```
 
-### Endpoints de monitoring
-- `/api/notify/health` - État général du service
-- `/api/webhooks/clerk/test` - Test de l'endpoint webhook
+### 🔍 **Endpoints de monitoring**
+
+- **Production** : `https://notifications-service-j6kz.onrender.com/api/notify/health`
+- **Local** : `http://localhost:9003/api/notify/health`
 
 ## 🎨 Templates
 
@@ -297,14 +371,17 @@ Les emails utilisent des templates HTML responsifs avec :
 
 ### Commandes utiles
 ```bash
-# Redémarrer le service
+# Redémarrer le service local
 npm run dev
 
 # Voir les logs en temps réel
 tail -f logs/app.log
 
-# Test rapide d'un endpoint
+# Test rapide d'un endpoint local
 curl http://localhost:9003/api/notify/health
+
+# Test rapide d'un endpoint de production
+curl https://notifications-service-j6kz.onrender.com/api/notify/health
 ```
 
 ## 🐛 Dépannage
@@ -312,18 +389,24 @@ curl http://localhost:9003/api/notify/health
 ### Problèmes courants
 
 #### Webhook non reçu
-- Vérifiez l'URL dans le dashboard Clerk
+- Vérifiez l'URL dans le dashboard Clerk (utilisez l'URL de production)
 - Assurez-vous que `CLERK_WEBHOOK_SECRET` est configuré
 - Vérifiez que les événements sont cochés
 
 #### Email non envoyé
 - Vérifiez la configuration SMTP
-- Consultez les logs d'erreur
+- Consultez les logs d'erreur (dashboard Render)
 - Testez manuellement l'endpoint
 
 #### Signature invalide
 - Vérifiez que le secret correspond
 - Assurez-vous que le middleware `rawBody` est utilisé
+
+### 🆘 **Support en production**
+
+- **Logs** : Dashboard Render → Logs en temps réel
+- **Variables d'environnement** : Dashboard Render → Environment
+- **Déploiements** : Dashboard Render → Deployments
 
 ## 📝 Notes techniques
 
@@ -334,12 +417,26 @@ curl http://localhost:9003/api/notify/health
 - **Error Handling** : Gestion d'erreurs robuste avec logs détaillés
 - **Sécurité** : Vérification cryptographique des webhooks
 - **Monitoring** : Endpoints de santé et logs détaillés
+- **Production** : Déployé et opérationnel sur Render
 
 ## 🚀 Évolution future
 
+- [x] **Service déployé en production** ✅
+- [x] **Webhooks Clerk fonctionnels** ✅
+- [x] **Emails automatiques** ✅
 - [ ] Notifications SMS
 - [ ] Notifications push
 - [ ] Templates d'email personnalisables
 - [ ] Analytics des notifications
 - [ ] Gestion des préférences utilisateur
-- [ ] Support multi-langues 
+- [ ] Support multi-langues
+
+## 🎉 **Statut actuel**
+
+**✅ SERVICE OPÉRATIONNEL EN PRODUCTION**
+
+- **URL** : https://notifications-service-j6kz.onrender.com
+- **Webhooks Clerk** : Fonctionnels et testés
+- **Emails automatiques** : Envoi confirmé
+- **Monitoring** : Logs et santé en temps réel
+- **Uptime** : Service stable et performant 
